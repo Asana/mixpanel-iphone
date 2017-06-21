@@ -54,6 +54,7 @@
 
 @property (nonatomic, copy) NSString *apiToken;
 @property (nonatomic, copy) NSString *userAgent;
+@property (nonatomic, copy) NSDictionary *httpHeaderFields;
 @property (atomic, strong) NSDictionary *superProperties;
 @property (atomic, strong) NSDictionary *automaticProperties;
 @property (nonatomic, strong) NSTimer *timer;
@@ -103,7 +104,7 @@
 static Mixpanel *sharedInstance = nil;
 
 
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions userAgent:(NSString *)userAgent
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions userAgent:(NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -114,14 +115,14 @@ static Mixpanel *sharedInstance = nil;
         const NSUInteger flushInterval = 60;
 #endif
         
-        sharedInstance = [[super alloc] initWithToken:apiToken launchOptions:launchOptions userAgent:userAgent andFlushInterval:flushInterval];
+        sharedInstance = [[super alloc] initWithToken:apiToken launchOptions:launchOptions userAgent:userAgent httpHeaderFields:httpHeaderFields andFlushInterval:flushInterval];
     });
     return sharedInstance;
 }
 
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions
 {
-    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:launchOptions userAgent:nil];
+    return [Mixpanel sharedInstanceWithToken:apiToken launchOptions:launchOptions userAgent:nil httpHeaderFields:nil];
 }
 
 + (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken
@@ -137,7 +138,7 @@ static Mixpanel *sharedInstance = nil;
     return sharedInstance;
 }
 
-- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions userAgent:(NSString *)userAgent andFlushInterval:(NSUInteger)flushInterval
+- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions userAgent:(NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields andFlushInterval:(NSUInteger)flushInterval
 {
     if (apiToken == nil) {
         apiToken = @"";
@@ -149,6 +150,7 @@ static Mixpanel *sharedInstance = nil;
         self.people = [[MixpanelPeople alloc] initWithMixpanel:self];
         self.apiToken = apiToken;
         self.userAgent = userAgent;
+        self.httpHeaderFields = httpHeaderFields;
         _flushInterval = flushInterval;
         self.flushOnBackground = YES;
         self.showNetworkActivityIndicator = YES;
@@ -211,7 +213,7 @@ static Mixpanel *sharedInstance = nil;
 
 - (instancetype)initWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions andFlushInterval:(NSUInteger)flushInterval
 {
-    return [self initWithToken:apiToken launchOptions:launchOptions userAgent:nil andFlushInterval:flushInterval];
+    return [self initWithToken:apiToken launchOptions:launchOptions userAgent:nil httpHeaderFields:nil andFlushInterval:flushInterval];
 }
 
 - (instancetype)initWithToken:(NSString *)apiToken andFlushInterval:(NSUInteger)flushInterval
@@ -686,6 +688,9 @@ static __unused NSString *MPURLEncode(NSString *s)
 {
     NSURL *URL = [NSURL URLWithString:[self.serverURL stringByAppendingString:endpoint]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    [self.httpHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        [request setValue:value forHTTPHeaderField:key];
+    }];
     [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     if (self.userAgent) {
         [request addValue:self.userAgent forHTTPHeaderField:@"User-Agent"];

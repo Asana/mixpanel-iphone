@@ -295,12 +295,13 @@ NS_ASSUME_NONNULL_BEGIN
  Initializes a singleton instance of the API, uses it to track launchOptions information,
  sets a custom user agent, and then returns it.
  
- @param apiToken        your project token
- @param launchOptions   your application delegate's launchOptions
- @param userAgent       custom user agent for API requests
+ @param apiToken            your project token
+ @param launchOptions       your application delegate's launchOptions
+ @param userAgent           custom user agent for API requests
+ @param httpHeaderFields    HTTP header fields that should be sent with every API request
  
  */
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent;
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields;
 
 /*!
  @method
@@ -326,12 +327,13 @@ NS_ASSUME_NONNULL_BEGIN
  one Mixpanel project from a single app. If you only need to send data to one
  project, consider using <code>sharedInstanceWithToken:</code>.
  
- @param apiToken        your project token
- @param launchOptions   optional app delegate launchOptions
- @param userAgent       custom user agent for API requests
- @param flushInterval   interval to run background flushing
+ @param apiToken            your project token
+ @param launchOptions       optional app delegate launchOptions
+ @param userAgent           custom user agent for API requests
+ @param httpHeaderFields    HTTP header fields that should be sent with every API request
+ @param flushInterval       interval to run background flushing
  */
-- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent andFlushInterval:(NSUInteger)flushInterval;
+- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields andFlushInterval:(NSUInteger)flushInterval;
 
 /*!
  @method
