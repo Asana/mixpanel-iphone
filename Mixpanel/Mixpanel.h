@@ -298,9 +298,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param apiToken        your project token
  @param launchOptions   your application delegate's launchOptions
  @param userAgent       custom user agent for API requests
+ @param httpHeaderFields  HTTP header fields that should be sent with every API request
  
  */
-+ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent;
++ (Mixpanel *)sharedInstanceWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields;
 
 /*!
  @method
@@ -329,9 +330,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param apiToken        your project token
  @param launchOptions   optional app delegate launchOptions
  @param userAgent       custom user agent for API requests
+ @param httpHeaderFields  HTTP header fields that should be sent with every API request
  @param flushInterval   interval to run background flushing
  */
-- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent andFlushInterval:(NSUInteger)flushInterval;
+- (instancetype)initWithToken:(NSString *)apiToken launchOptions:(nullable NSDictionary *)launchOptions userAgent:(nullable NSString *)userAgent httpHeaderFields:(nullable NSDictionary<NSString *, NSString *> *)httpHeaderFields andFlushInterval:(NSUInteger)flushInterval;
 
 /*!
  @method
