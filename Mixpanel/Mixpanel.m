@@ -430,9 +430,6 @@ static __unused NSString *MPURLEncode(NSString *s)
         NSDictionary *e = @{@"event": event, @"properties": [NSDictionary dictionaryWithDictionary:p]};
         MixpanelDebug(@"%@ queueing event: %@", self, e);
         [self.eventsQueue addObject:e];
-        if ([self.eventsQueue count] > 500) {
-            [self.eventsQueue removeObjectAtIndex:0];
-        }
         if ([Mixpanel inBackground]) {
             [self archiveEvents];
         }
